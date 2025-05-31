@@ -1001,46 +1001,49 @@ input="""
 28 29 32 33 34
 
 """
-output=0
 def solution(input):
-   
-    reports=input.strip().split("\n")
-    temp_report=[]
-    output=0
+    reports = input.strip().splitlines()
+    safe_count = 0
 
-    for report in reports:
-        temp_report=report.split()
-        for i,digit in enumerate(temp_report):
-            temp_report[i]=int(digit)
-        
-        chance=0
-        
-        output+=report_analysis(temp_report,chance)
-       
-    return output
+    for line in reports:
+        #"line.strip().split()" will take the line and make it into an array of strings of the individual things e.g. ["1","2","3"]
+        #map(int,["1","2","3"]) will go through the entire string array and turn them to ints
+        #list turns the things to an array. Ignore everything about the data structure... it just works like this
+        report = list(map(int, line.strip().split()))
+        if report_analysis(report):
+            safe_count += 1
+        else:
+            # Try removing one level at a time
+            for i in range(len(report)):
+                #remove the element at i ie new_report=everything from the begining before i +everything after i upto the end
+                new_report = report[:i] + report[i+1:]
+                if report_analysis(new_report):
+                    safe_count += 1
+                    break
+    return safe_count
 
 
-def report_analysis(temp_report,chance):
-    l,r=0,1
-    is_increasing=False
-    tchance=chance
+def report_analysis(report):
+    i = 0
+    is_increasing = None
 
-    if temp_report[r]>temp_report[l]:
-        is_increasing=True
-    while r<len(temp_report):
+    while i < len(report) - 1:
+        diff = report[i+1] - report[i]
+        #abs(number) makes the number positive e.g. abs(-3.1) is 3.1
+        #handles cases of difference==0 and is greater than 3
+        if abs(diff) < 1 or abs(diff) > 3:
+            return False
 
-        if temp_report[r]==temp_report[l]  or(is_increasing and temp_report[r]<temp_report[l]) or (is_increasing==False and temp_report[r]>temp_report[l]) or (is_increasing and (temp_report[r]-temp_report[l])>3) or (is_increasing==False and (temp_report[l]-temp_report[r])>3):
-            if tchance==len(temp_report)+1:
-                return 0
-            else:
-                # handle removing from l or r
-                del temp_report[tchance]
-                tchance+=1
-                
-                return report_analysis(temp_report,tchance)
-        
-        l+=1
-        r+=1
-    return 1
-           
+        if is_increasing is None:
+            is_increasing = diff > 0
+        else:
+            if is_increasing and diff < 0:
+                return False
+            if not is_increasing and diff > 0:
+                return False
+
+        i += 1
+
+    return True
+      
 print(solution(input))
