@@ -1,0 +1,1 @@
+You call it boredom I call it being a 10x genius on deez natz(chestnuts)
