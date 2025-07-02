@@ -119,3 +119,4 @@ for thing in input:
             count+=1
 print(count)
 # EVERYTHING I OFF BY PLUS ONE OUTPUT+1
+# shoulda prolly made the input a 2d array for ease of traversing especially for turning direction and actually updating "X" 
