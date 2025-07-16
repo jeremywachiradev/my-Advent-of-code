@@ -1,3 +1,7 @@
+"""
+WRONG   WRONG !!!!!!!!!!!!
+"""
+
 input="""
 R 6 (#70c710)
 D 5 (#0dc571)
@@ -17,6 +21,7 @@ U 2 (#7a21e3)
 starting=(1,1)
 trenches=[]
 trenches.append([starting,starting])
+output=0
 
 max_row=0
 max_col=0
@@ -38,6 +43,7 @@ def traverse(starting,direction,steps):
     
     if first_step!=last_step:
         trenches.append([first_step,last_step])
+        
     else:
         trenches.append([last_step])
     return last_step[0],last_step[1]
@@ -52,17 +58,22 @@ for line in input:
     max_col=max(col,max_col)
     # print(f"the direction is {direction}and the steps is {steps}")
 
-trenches_map=[["." for _ in range(max_col) ]for _ in range(max_row)]
+trenches_map=[["." for _ in range(max_col+2) ]for _ in range(max_row+2)]
 
+# print(trenches)
 
 for index,element in enumerate(trenches):
     if index==0:
         continue
-    
-    starting_row=(element[0][0])-1
-    starting_col=element[0][1]
-    ending_row=(element[1][0])-1
-    ending_col=element[1][1]
+    # print(element)
+    starting_row=(element[0][0])
+    starting_col=(element[0][1])
+    if len(element)==1:
+        ending_col=starting_col
+        ending_row=starting_row
+    else:
+        ending_row=(element[1][0])
+        ending_col=(element[1][1])
     row_diff=ending_row-starting_row
     col_diff=ending_col-starting_col
     is_positive=False
@@ -72,8 +83,8 @@ for index,element in enumerate(trenches):
             is_positive=True
         while True:
             trenches_map[starting_row][starting_col]="#"
-            print(starting_col,type(starting_col))
-            # print(f"starting row is {starting_row} and starting col is {starting_row}")
+            # print(starting_col,type(starting_col))
+            # print(f"starting row is {starting_row} and starting col is {starting_col}")
             if starting_col==ending_col:
                 break
             if is_positive:
@@ -86,16 +97,43 @@ for index,element in enumerate(trenches):
         if row_diff>0:
             is_positive=True
         while True:
-            trenches_map[starting_row][starting_col]="#"
+            trenches_map[starting_row][starting_col]="#" # print(f"starting row is {starting_row} and starting col is {starting_col}")
+            
             if starting_row==ending_row:
                 break
             if is_positive:
                 starting_row+=1
             else:
                 starting_row-=1
-    # for _ in range(ending_row)
     
-    
-# print(trenches)
-# print(trenches_map)
+from collections import deque
+
+# Flood fill from (0,0)
+def flood_fill(grid, start_r, start_c):
+    rows, cols = len(grid), len(grid[0])
+    queue = deque()
+    queue.append((start_r, start_c))
+
+    while queue:
+        r, c = queue.popleft()
+        if r < 0 or r >= rows or c < 0 or c >= cols:
+            continue
+        if grid[r][c] != ".":
+            continue
+        grid[r][c] = "O"  # Temporarily mark as outside
+        queue.append((r+1, c))
+        queue.append((r-1, c))
+        queue.append((r, c+1))
+        queue.append((r, c-1))
+
+# Run the fill
+flood_fill(trenches_map, 0, 0)
+
+for r in range(len(trenches_map)):
+    for c in range(len(trenches_map[0])):
+        if trenches_map[r][c]=="." or trenches_map[r][c]=="#":
+            output+=1
+
+print(output)
+print(trenches_map)
 print(max_row,max_col)
